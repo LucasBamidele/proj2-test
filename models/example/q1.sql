@@ -9,4 +9,4 @@
 
 {{ config(materialized='table') }}
 
-SELECT id, text FROM graph.tweets WHERE CONTAINS_SUBSTR(lcase(text), '#maga') or CONTAINS_SUBSTR(lcase(text), 'trump') 
+SELECT id, text FROM graph.tweets WHERE CONTAINS_SUBSTR(text, '#maga') or CONTAINS_SUBSTR(text, 'trump') 
