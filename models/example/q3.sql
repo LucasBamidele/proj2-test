@@ -9,4 +9,5 @@
 
 {{ config(materialized='table') }}
 
-SELECT id, text FROM graph.tweets limit 100
+with tmp as (select twitter_username as src, REGEXP_EXTRACT(text, r'@[\w\d]+') as dst from graph.tweets)
+select distinct src, SUBSTR(dst, 1) as dst from tmp where STARTS_WITH(dst, '@');
