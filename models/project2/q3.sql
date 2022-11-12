@@ -9,19 +9,5 @@
 
 {{ config(materialized='table') }}
 
-with source_data as (
-
-    select 1 as id
-    union all
-    select null as id
-
-)
-
-select *
-from source_data
-
-/*
-    Uncomment the line below to remove records with null `id` values
-*/
-
--- where id is not null
+with tmp as (select twitter_username as src, REGEXP_EXTRACT(text, r'@[\w\d]+') as dst from graph.tweets)
+select distinct src, SUBSTR(dst, 1) as dst from tmp where STARTS_WITH(dst, '@')
