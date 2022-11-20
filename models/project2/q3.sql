@@ -9,5 +9,5 @@
 
 {{ config(materialized='table') }}
 
-create table `blabla` as (with tmp as (select twitter_username as src, REGEXP_EXTRACT(text, r'@[\w\d]+') as dst from graph.tweets)
+create table dbt_lucasbamidele.blabla as (with tmp as (select twitter_username as src, REGEXP_EXTRACT(text, r'@[\w\d]+') as dst from graph.tweets)
 select distinct src, SUBSTR(dst, 2) as dst from tmp where STARTS_WITH(dst, '@'))
