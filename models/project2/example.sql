@@ -1,2 +1,3 @@
 {{ config(materialized='table') }}
-Select * from `graph.tweets` limit 10
+select * from graph.tweets limit 10
+-- Select count(*) from `graph.tweets` where twitter_username like '%@%' limit 10
