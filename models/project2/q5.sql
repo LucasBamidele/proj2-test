@@ -1,12 +1,24 @@
 {{ config(materialized='table') }}
 
 
-with indegree as (
+with indegree_count as (
     SELECT dst , count(*) as indeg 
     FROM {{ref('q3')}} 
     GROUP BY dst
-    ORDER BY count(*) desc
+    ORDER BY indeg desc
 ),
+indegree0 as (
+    select src
+    from {{ref('q3')}} 
+    except distinct
+    select dst from indegree_count
+),
+indegree as (
+    select src, 0 as indeg from indegree0
+    union all
+    select * from indegree_count
+),
+
 likes as (
     select twitter_username, avg(like_num) as avg_likes from graph.tweets group by twitter_username
 ),
@@ -27,7 +39,8 @@ unpopular_tweets as (
     from unpopular_users, graph.tweets
     where twitter_username = unpopular
 )
-select count(*) /(select count(*) from unpopular_tweets) from unpopular_tweets, popular_users 
+select text, popular --count(*) /(select count(*) from unpopular_tweets) as percentage
+from unpopular_tweets, popular_users 
 -- select text, popular from unpopular_tweets, popular_users 
-where text like concat('%@',popular,'%')
-limit 200
+where regexp_contains(text, concat('@',SUBSTR(popular, 1,5),'$'))
+limit 5
